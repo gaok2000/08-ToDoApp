@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+
+
+    
+    <head>
+        <title>08 ToDoApp</title>
+        <link href="style.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+        <p id="sampletext"></p>
+
+        <div id="todocontainter">
+            <div id="headercontainer">
+                <form>
+                    <input type="text" id="createnewtext" value="New Task">
+                    <input type="submit" id="createnew" value="Add" onclick="CreateNew()">
+                </form>
+             </div>
+            <div id="ToDoObjects"></div>
+            
+        </div>
+    </body>
+    <script>
+
+        var ToDoList;
+
+        var ToDoIndex=0;
+
+        var ToDoId;
+
+        const ToDoTemplate = `
+            <div id='box'>
+                <form>
+                    
+                    <input type="checkbox" class="Checkboxes" id="checkbox${ToDoIndex}">
+                </form>
+                    <p class="ToDoText" id="ToDoInput${ToDoIndex}">Task</p>
+                <button id="deleteTask" onclick="Delete(${ToDoIndex})">Delete Entry</button>
+
+            </div>`;
+           
+        
+
+            const xhttp = new XMLHttpRequest();
+
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    ToDoList = JSON.parse(this.responseText);
+                    ResetPage();
+                                        
+                }
+            };
+  
+            xhttp.open("GET", "https://cse204.work/todos", true);
+            xhttp.setRequestHeader("x-api-key","84ea86-6f8dbc-81825f-f8779a-d0247b");
+            xhttp.send();
+            
+
+            
+
+        function OnAwake(){
+                
+                for (var i=0; i<ToDoList.length; i++){
+                    
+                    let todo = ToDoList[i];
+
+                    
+                    let id = todo.id;
+                    let text = todo.text;
+                    let isCompleted = todo.completed;
+                    console.log( id + " " + text + ". Did I complete: " + isCompleted );
+                    
+                    OnAwakeCreate(id,text, isCompleted, i);
+            }
+        }
+
+        function Get(){
+            event.preventDefault();
+//GET NOT UPDATING TODOLIST
+            var xhttp2 = new XMLHttpRequest();
+
+            xhttp2.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    ToDoList = JSON.parse(this.responseText);
+                    //alert(ToDoList);   
+                    ResetPage();               
+                }
+            };
+  
+            xhttp2.open("GET", "https://cse204.work/todos", true);
+            xhttp2.setRequestHeader("x-api-key","84ea86-6f8dbc-81825f-f8779a-d0247b");
+            xhttp2.send();
+
+            //alert(ToDoList);
+        }
+            
+           
+            
+     
+        function PostNew(){
+            event.preventDefault();
+            var data = {
+                text: document.getElementById('createnewtext').value
+            }
+
+            var xhttp2 = new XMLHttpRequest();
+
+            xhttp2.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var todo = JSON.parse(this.responseText);
+                    Get();
+                    document.getElementById("createnewtext").value="New Task";
+                } else if (this.readyState == 4) {
+                }
+            };
+            xhttp2.open("POST", "https://cse204.work/todos", true);
+            xhttp2.setRequestHeader("Content-type", "application/json");
+            xhttp2.setRequestHeader("x-api-key", "84ea86-6f8dbc-81825f-f8779a-d0247b");
+            xhttp2.send(JSON.stringify(data));
+
+            
+        }
+
+        function CreateNew(){
+
+            
+            event.preventDefault();
+            PostNew();
+            
+            //alert(ToDoList.length +ToDoList);
+            
+        
+        }
+
+        function OnAwakeCreate(id, text, completed, index){
+            event.preventDefault();
+            const ToDoElement = document.createElement("div");
+
+            const node = document.createElement("div");
+
+            const textnode = document.createTextNode("temp");
+
+            node.appendChild(textnode);
+
+            node.id=id;
+
+            document.getElementById("ToDoObjects").appendChild(node);
+            
+            document.getElementById(id).innerHTML=`
+            <div id="box${index}" class="toDoOEntry">
+                <form>
+                    
+                    <input type="checkbox" class="checkboxes" id="checkbox${index}" onclick="ToggleCompleted(${index})" checked="false">
+                </form>
+                    <p class="toDoText" id="ToDoInput${index}">Task</p>
+                <button id="deleteTask" class="deleteTask" onclick="Delete(${index})">Delete Entry</button>
+
+            </div>`;
+
+            
+            document.getElementById("ToDoInput"+index).innerHTML=text;
+            //console.log(document.getElementById("ToDoInput"+index).innerHTML.text);
+            
+            
+        }
+
+        function UpdateOne(TaskIndex){
+            event.preventDefault();
+            var id = ToDoList[TaskIndex].id;
+//DATA NOT BEING UPLOADED CORRECTLY
+            //alert(ToDoList[TaskIndex].completed);
+            var data = {
+                "text": ToDoList[TaskIndex].text,
+                "completed": ToDoList[TaskIndex].completed,
+                "id": ToDoList[TaskIndex].id
+            } 
+
+            var xhttp2 = new XMLHttpRequest();
+
+            xhttp2.onreadystatechange = function() {
+
+                if (this.readyState == 4 && this.status == 200) {
+                    var todo = JSON.parse(this.responseText);
+                    console.log(todo);
+                    ResetPage();
+                } else if (this.readyState == 4) {
+                    console.log(this.responseText);
+                }
+            };
+
+            xhttp2.open("PUT", "https://cse204.work/todos/"+id, true);
+
+            xhttp2.setRequestHeader("Content-type", "application/json");
+            xhttp2.setRequestHeader("x-api-key", "84ea86-6f8dbc-81825f-f8779a-d0247b");
+            xhttp2.send(JSON.stringify(data));
+
+            
+        }
+
+
+        function ResetPage(){
+            //event.preventDefault();
+            const myNode = document.getElementById("ToDoObjects");
+            while (myNode.firstChild) {
+            myNode.removeChild(myNode.lastChild);
+            }
+            OnAwake();
+
+            //Parse for completed
+            for (var i=0; i<ToDoList.length; i++){
+                document.getElementById("checkbox"+i).checked=false;
+                if(ToDoList[i].completed){
+                    //document.getElementById("ToDoInputs"+i).classList.add("completed");
+                    document.getElementById("checkbox"+i).checked=true;
+                    document.getElementById("ToDoInput"+i).classList.add("completed");
+                    document.getElementById("box"+i).classList.add("completed");
+                    //alert("checked true");
+                }
+                else{
+                    document.getElementById("checkbox"+i).checked=false;
+                }
+            }
+            //alert("page reset");
+        }
+
+        function Delete(indexOfDelete){
+//DELETE NOT WORKING, DONT KNOW WHAT DATA TO PASS
+            event.preventDefault();
+            var id = ToDoList[indexOfDelete].id;
+
+            var xhttp2 = new XMLHttpRequest();
+
+            xhttp2.onreadystatechange = function() {
+
+                if (this.readyState == 4 && this.status == 200) {
+                    //var todo = JSON.parse(this.responseText);
+                    //console.log(todo);
+                    Get();
+                    
+                } else if (this.readyState == 4) {
+                    //console.log(this.responseText);
+                }
+            };
+
+            xhttp2.open("DELETE", "https://cse204.work/todos/"+id, true);
+
+            //xhttp2.setRequestHeader("Content-type", "application/json");
+            xhttp2.setRequestHeader("x-api-key", "84ea86-6f8dbc-81825f-f8779a-d0247b");
+            xhttp2.send();
+            
+            
+
+            
+
+        }
+
+        function ToggleCompleted(index){
+            //alert(ToDoList[index].completed);
+
+            if(ToDoList[index].completed){
+                ToDoList[index].completed=false;
+                
+                document.getElementById("checkbox"+index).checked=false;
+                document.getElementById("ToDoInput"+index).removeAttribute("class");
+                document.getElementById("ToDoInput"+index).classList.add("toDoText");
+                document.getElementById("box"+index).removeAttribute("class");
+                document.getElementById("box"+index).classList.add("toDoOEntry");
+                
+            }
+            else{
+                ToDoList[index].completed=true;
+                
+                document.getElementById("checkbox"+index).checked=true;
+                document.getElementById("ToDoInput"+index).classList.add("completed");
+                document.getElementById("box"+index).classList.add("completed");
+                
+            }
+
+            UpdateOne(index);
+
+
+        }
+
+        
+
+    </script>
+</html>

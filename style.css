@@ -1,0 +1,153 @@
+*{
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", 
+  Helvetica, Arial, "Lucida Grande", sans-serif;
+/*     border:1px solid red; */
+    
+    
+}
+
+body{
+    background-color:#181818;
+}
+
+.toDoOEntry{
+/*     border:1px solid red; */
+    width:70%;
+    height:100px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:30px;
+    border-radius:10px;
+    background-color:#989898;
+    position:relative;
+}
+
+.checkboxes{
+    position:relative;
+    top:40px;
+    left:40px;
+    transform: scale(2);
+    
+}
+
+.toDoText{
+    color:#2b2b2b;
+    position:relative;
+    float:left;
+    left:100px;
+    top:-2px;
+    font-size:20px;
+    font-weight:600;
+}
+
+.deleteTask{
+    float:right;
+    position:relative;
+    bottom:0px;
+    height:60px;
+    left:-50px;
+    border-radius:10px;
+    border:none;
+    color:#4a4a4a;
+    transition-duration: 500ms;
+}
+
+.deleteTask:hover{
+    background-color:#4d4d4d;
+    color:#040404;
+}
+
+.completed{
+    background-color:#456b45;
+    
+}
+
+#ToDoObjects{
+    position:relative;
+    top:100px;
+}
+
+#headercontainer{
+
+    width:100;
+    position:fixed;
+    width:100%;
+    left:0px;
+    height:100px;
+    top:0px;
+    background-color:#575656;
+}
+
+#createnew{
+    position:relative;
+    width:200px;
+    top:40px;
+    height:37px;
+    float:right;
+    right:15%;
+    border-radius:0px 10px 10px 0px;
+    border:none;
+    transition-duration: 500ms;
+}
+
+#createnew:hover{
+    background-color:#636262;
+}
+
+#createnewtext{
+    position:relative;
+    width:69%;
+    left:15%;
+    top:40px;
+    height:35px;
+    border-radius:10px 0px 0px 10px;
+    background-color:#949494;
+    border:none;
+}
+
+@media screen and (max-width: 1024px) {
+
+
+    .toDoOEntry{
+        width:110%;
+        border:none;
+        margin-left:-5%;
+    }
+
+    .checkboxes{
+        left:20%;
+    }
+    .toDoText{
+        left:30%;
+    }
+    
+    .deleteTask{
+        position:relative;
+        left:-20%;
+    }
+
+    #createnew{
+        
+        position:relative;
+        width:100px;
+        top:30px;
+        height:45px;
+        float:right;
+        right:18%;
+        border-radius:0px 10px 10px 0px;
+        border:none;
+        transition-duration: 500ms;
+    }
+        
+    #createnewtext{
+        position:relative;
+        width:60%;
+        left:15%;
+        top:30px;
+        height:44px;
+        border-radius:10px 0px 0px 10px;
+        background-color:#949494;
+        border:none;
+
+    }
+}
